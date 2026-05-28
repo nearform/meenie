@@ -20,19 +20,19 @@ describe("helpBlocks", () => {
     const { text } = helpBlocks();
     const bulletLines = text
       .split("\n")
-      .filter((line) => line.startsWith("/meeny "));
+      .filter((line) => line.startsWith("/meenie "));
     expect(bulletLines.length).toBe(4);
   });
 
   it("text fallback contains the known syntax lines for pick/list/stats/help", () => {
     listSubcommands.mockReturnValueOnce(["help", "list", "pick", "stats"]);
     const { text } = helpBlocks();
-    expect(text).toContain("/meeny pick [#channel | @list]");
+    expect(text).toContain("/meenie pick [#channel | @list]");
     expect(text).toContain(
-      "/meeny list <create|add|remove|show|delete> ...",
+      "/meenie list <create|add|remove|show|delete> ...",
     );
-    expect(text).toContain("/meeny stats [#channel | @list]");
-    expect(text).toContain("/meeny help");
+    expect(text).toContain("/meenie stats [#channel | @list]");
+    expect(text).toContain("/meenie help");
   });
 
   it("renders a placeholder when no subcommands are registered", () => {
@@ -58,7 +58,7 @@ describe("helpBlocks", () => {
   it("falls back to a generic usage line for unknown subcommand names", () => {
     listSubcommands.mockReturnValueOnce(["pick", "wibble"]);
     const { text } = helpBlocks();
-    expect(text).toContain("/meeny wibble");
+    expect(text).toContain("/meenie wibble");
     expect(text).toContain("(no description)");
   });
 });

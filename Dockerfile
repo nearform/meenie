@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 #
-# Multi-stage build for meeny.
+# Multi-stage build for meenie.
 #
 # Layout:
 #   deps     -> production dependencies only (small, cache-friendly)

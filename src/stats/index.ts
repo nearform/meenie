@@ -1,6 +1,6 @@
 /**
  * Stats service: append-only audit log of picks plus the fairness aggregation
- * read by `/meeny stats`.
+ * read by `/meenie stats`.
  *
  * Error policy:
  *   - `recordPick` / `recordPicks` log-and-swallow on failure. Recording is

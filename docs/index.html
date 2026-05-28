@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>meeny — pick someone at random in Slack</title>
+    <title>meenie — pick someone at random in Slack</title>
     <meta
       name="description"
       content="Self-hosted Slack app that picks team members at random from a channel or a custom list. Open source, MIT-licensed, pairs with Slack's built-in /remind for scheduled picks."
@@ -11,13 +11,13 @@
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="style.css" />
-    <meta property="og:title" content="meeny — pick someone at random in Slack" />
+    <meta property="og:title" content="meenie — pick someone at random in Slack" />
     <meta
       property="og:description"
       content="Self-hosted Slack random picker. Channels, custom lists, fairness stats. One container plus Postgres."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://nearform.github.io/meeny/" />
+    <meta property="og:url" content="https://nearform.github.io/meenie/" />
   </head>
   <body>
     <div class="page">
@@ -39,9 +39,9 @@
               stroke-linejoin="round"
             />
           </svg>
-          <span>meeny</span>
+          <span>meenie</span>
         </p>
-        <h1>meeny</h1>
+        <h1>meenie</h1>
         <p class="hero__tagline">Pick someone at random in Slack.</p>
         <p class="hero__description">
           A tiny self-hosted Slack app that picks one of your teammates fairly
@@ -50,7 +50,7 @@
           One container plus Postgres. MIT-licensed.
         </p>
         <p class="hero__ctas">
-          <a class="install" href="https://github.com/nearform/meeny">
+          <a class="install" href="https://github.com/nearform/meenie">
             <svg
               class="install__icon"
               viewBox="0 0 16 16"
@@ -65,7 +65,7 @@
             </svg>
             <span>View on GitHub</span>
           </a>
-          <a class="install install--secondary" href="https://github.com/nearform/meeny#quickstart">
+          <a class="install install--secondary" href="https://github.com/nearform/meenie#quickstart">
             <span>Read the docs</span>
           </a>
         </p>
@@ -76,7 +76,7 @@
         <ol class="steps">
           <li class="step">
             <span class="step__num" aria-hidden="true">1</span>
-            <h3>Self-host meeny</h3>
+            <h3>Self-host meenie</h3>
             <p>
               One container plus Postgres. <code>docker compose up</code> and
               you have an HTTPS-ready Slack app behind ngrok, ready for
@@ -87,8 +87,8 @@
             <span class="step__num" aria-hidden="true">2</span>
             <h3>Pick from channels or lists</h3>
             <p>
-              Run <code>/meeny pick #channel</code> for an ad-hoc pick, or
-              create a curated list with <code>/meeny list create</code> and
+              Run <code>/meenie pick #channel</code> for an ad-hoc pick, or
+              create a curated list with <code>/meenie list create</code> and
               pick from that.
             </p>
           </li>
@@ -96,7 +96,7 @@
             <span class="step__num" aria-hidden="true">3</span>
             <h3>Track fairness</h3>
             <p>
-              <code>/meeny stats</code> shows how often each member has been
+              <code>/meenie stats</code> shows how often each member has been
               picked recently, so you can spot drift before anyone else does.
             </p>
           </li>
@@ -107,19 +107,19 @@
         <h2 id="commands">Commands</h2>
         <dl class="commands">
           <div>
-            <dt>/meeny pick [#channel | @list]</dt>
+            <dt>/meenie pick [#channel | @list]</dt>
             <dd>Pick a member at random from a channel or a custom list.</dd>
           </div>
           <div>
-            <dt>/meeny list &lt;create|add|remove|show|delete&gt; ...</dt>
+            <dt>/meenie list &lt;create|add|remove|show|delete&gt; ...</dt>
             <dd>Manage custom pick lists scoped to your workspace.</dd>
           </div>
           <div>
-            <dt>/meeny stats [#channel | @list]</dt>
+            <dt>/meenie stats [#channel | @list]</dt>
             <dd>Show per-member pick counts over the last 30 days.</dd>
           </div>
           <div>
-            <dt>/meeny help</dt>
+            <dt>/meenie help</dt>
             <dd>Show the in-Slack help message.</dd>
           </div>
         </dl>
@@ -129,13 +129,13 @@
         <h2 id="automation">Schedule picks with /remind</h2>
         <div class="callout">
           <p>
-            meeny intentionally has no scheduler of its own. Pair it with
+            meenie intentionally has no scheduler of its own. Pair it with
             Slack's built-in <code>/remind</code> and you get scheduled picks
             for free:
           </p>
           <p>
             <code
-              >/remind #standup to /meeny pick #standup every Monday at 9am</code
+              >/remind #standup to /meenie pick #standup every Monday at 9am</code
             >
           </p>
         </div>
@@ -144,25 +144,25 @@
       <section class="prose" aria-labelledby="self-host">
         <h2 id="self-host">Run your own</h2>
         <p>
-          meeny is self-hosted by design — there's no central SaaS to lock
+          meenie is self-hosted by design — there's no central SaaS to lock
           your workspace into. The fast path with a public HTTPS tunnel:
         </p>
-        <pre><code>git clone https://github.com/nearform/meeny.git
-cd meeny
+        <pre><code>git clone https://github.com/nearform/meenie.git
+cd meenie
 cp .env.example .env  <span class="muted"># fill in NGROK_AUTHTOKEN</span>
 docker compose --profile tunnel up --build
 docker compose logs ngrok  <span class="muted"># copy the https URL into app.manifest.json</span></code></pre>
         <p>
           Full instructions, deploy notes, and the Slack manifest live in
-          <a href="https://github.com/nearform/meeny#quickstart">the README</a>.
+          <a href="https://github.com/nearform/meenie#quickstart">the README</a>.
         </p>
       </section>
 
       <footer>
         <p>
-          <a href="https://github.com/nearform/meeny">GitHub</a>
+          <a href="https://github.com/nearform/meenie">GitHub</a>
           &middot;
-          <a href="https://github.com/nearform/meeny/issues">Issues</a>
+          <a href="https://github.com/nearform/meenie/issues">Issues</a>
           &middot;
           Made by <a href="https://www.nearform.com/">nearform</a>
         </p>

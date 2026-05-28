@@ -2,7 +2,7 @@
 -- stats per (team, scope). Scope is denormalised as (scope_type, scope_id) so
 -- channel and list picks share the same table without a join to `lists`. List
 -- scope_id stores the list *name* (matching the value parsed from
--- /meeny pick @<name>) so the stats and pick code paths agree without
+-- /meenie pick @<name>) so the stats and pick code paths agree without
 -- needing to resolve the list's BIGSERIAL id.
 
 CREATE TABLE IF NOT EXISTS picks (

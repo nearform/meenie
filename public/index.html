@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>meeny — pick someone at random in Slack</title>
+    <title>meenie — pick someone at random in Slack</title>
     <meta
       name="description"
-      content="meeny is a Slack app that picks team members at random from a channel or a custom list. Free, open source, and pairs with Slack's built-in /remind for scheduled picks."
+      content="meenie is a Slack app that picks team members at random from a channel or a custom list. Free, open source, and pairs with Slack's built-in /remind for scheduled picks."
     />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -32,9 +32,9 @@
               stroke-linejoin="round"
             />
           </svg>
-          <span>meeny</span>
+          <span>meenie</span>
         </p>
-        <h1>meeny</h1>
+        <h1>meenie</h1>
         <p class="hero__tagline">Pick someone at random in Slack.</p>
         <p class="hero__description">
           A tiny Slack app that picks one of your teammates fairly — from any
@@ -79,7 +79,7 @@
             <span class="step__num" aria-hidden="true">1</span>
             <h3>Add to Slack</h3>
             <p>
-              One-click install via OAuth. meeny only asks for the scopes it
+              One-click install via OAuth. meenie only asks for the scopes it
               needs to read channel members and post messages.
             </p>
           </li>
@@ -87,8 +87,8 @@
             <span class="step__num" aria-hidden="true">2</span>
             <h3>Pick from channels or lists</h3>
             <p>
-              Run <code>/meeny pick #channel</code> for an ad-hoc pick, or
-              create a curated list with <code>/meeny list create</code> and
+              Run <code>/meenie pick #channel</code> for an ad-hoc pick, or
+              create a curated list with <code>/meenie list create</code> and
               pick from that.
             </p>
           </li>
@@ -96,7 +96,7 @@
             <span class="step__num" aria-hidden="true">3</span>
             <h3>Track fairness</h3>
             <p>
-              <code>/meeny stats</code> shows how often each member has been
+              <code>/meenie stats</code> shows how often each member has been
               picked recently, so you can spot drift before anyone else does.
             </p>
           </li>
@@ -107,19 +107,19 @@
         <h2 id="commands">Commands</h2>
         <dl class="commands">
           <div>
-            <dt>/meeny pick [#channel | @list]</dt>
+            <dt>/meenie pick [#channel | @list]</dt>
             <dd>Pick a member at random from a channel or a custom list.</dd>
           </div>
           <div>
-            <dt>/meeny list &lt;create|add|remove|show|delete&gt; ...</dt>
+            <dt>/meenie list &lt;create|add|remove|show|delete&gt; ...</dt>
             <dd>Manage custom pick lists scoped to your workspace.</dd>
           </div>
           <div>
-            <dt>/meeny stats [#channel | @list]</dt>
+            <dt>/meenie stats [#channel | @list]</dt>
             <dd>Show per-member pick counts over the last 30 days.</dd>
           </div>
           <div>
-            <dt>/meeny help</dt>
+            <dt>/meenie help</dt>
             <dd>Show the in-Slack help message.</dd>
           </div>
         </dl>
@@ -129,13 +129,13 @@
         <h2 id="automation">Schedule picks with /remind</h2>
         <div class="callout">
           <p>
-            meeny intentionally has no scheduler of its own. Pair it with
+            meenie intentionally has no scheduler of its own. Pair it with
             Slack's built-in <code>/remind</code> and you get scheduled picks
             for free:
           </p>
           <p>
             <code
-              >/remind #standup to /meeny pick #standup every Monday at 9am</code
+              >/remind #standup to /meenie pick #standup every Monday at 9am</code
             >
           </p>
         </div>

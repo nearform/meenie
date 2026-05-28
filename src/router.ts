@@ -16,7 +16,7 @@ export type SubcommandHandler = (ctx: SubcommandContext) => Promise<void>;
 const subcommands = new Map<string, SubcommandHandler>();
 
 /**
- * Register a subcommand under `/meeny`. Idempotent on the name: duplicate
+ * Register a subcommand under `/meenie`. Idempotent on the name: duplicate
  * registrations throw to surface accidental collisions between parallel
  * agents during dev.
  *
@@ -35,7 +35,7 @@ export function listSubcommands(): readonly string[] {
   return [...subcommands.keys()].sort();
 }
 
-boltApp.command("/meeny", async ({ command, ack, respond }) => {
+boltApp.command("/meenie", async ({ command, ack, respond }) => {
   await ack();
   const rawText = (command.text ?? "").trim();
   const [name = "help", ...args] = rawText.split(/\s+/).filter(Boolean);
@@ -43,7 +43,7 @@ boltApp.command("/meeny", async ({ command, ack, respond }) => {
   if (!handler) {
     await respond({
       response_type: "ephemeral",
-      text: `Unknown subcommand: \`${name}\`. Try \`/meeny help\`.`,
+      text: `Unknown subcommand: \`${name}\`. Try \`/meenie help\`.`,
     });
     return;
   }
@@ -58,10 +58,10 @@ boltApp.command("/meeny", async ({ command, ack, respond }) => {
       respond,
     });
   } catch (err) {
-    console.error(`/meeny ${name} failed`, err);
+    console.error(`/meenie ${name} failed`, err);
     await respond({
       response_type: "ephemeral",
-      text: `Sorry, something went wrong running \`/meeny ${name}\`.`,
+      text: `Sorry, something went wrong running \`/meenie ${name}\`.`,
     });
   }
 });

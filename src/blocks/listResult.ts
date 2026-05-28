@@ -1,5 +1,5 @@
 /**
- * Block Kit fragments for `/meeny list ...` responses. Kept separate from the
+ * Block Kit fragments for `/meenie list ...` responses. Kept separate from the
  * handler so the handler stays a thin dispatcher.
  *
  * We declare a minimal structural block type locally rather than depending on
@@ -49,7 +49,7 @@ export function listShowBlocks(
           {
             type: "mrkdwn",
             text:
-              "_No members yet._ Add some with `/meeny list add " +
+              "_No members yet._ Add some with `/meenie list add " +
               name +
               " @user`.",
           },
@@ -80,8 +80,8 @@ export function listIndexBlocks(
         text: {
           type: "mrkdwn",
           text:
-            "*No lists yet.*\nCreate one with `/meeny list create <name>`, " +
-            "then add people with `/meeny list add <name> @user`.",
+            "*No lists yet.*\nCreate one with `/meenie list create <name>`, " +
+            "then add people with `/meenie list add <name> @user`.",
         },
       },
     ];

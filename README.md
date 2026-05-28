@@ -1,9 +1,9 @@
-# meeny
+# meenie
 
 **Pick someone at random in Slack.** From a channel, from a custom list, or whoever is around. Open-source, self-hosted, no SaaS lock-in.
 
 ```
-/meeny pick #standup
+/meenie pick #standup
 > @alice is up.
 > Picked 1 of 7 members in #standup     [ Pick again ]
 ```
@@ -11,13 +11,13 @@
 Combine with Slack's built-in `/remind` and scheduled picks are free:
 
 ```
-/remind #standup to /meeny pick every Monday at 9am
+/remind #standup to /meenie pick every Monday at 9am
 ```
 
-## Why meeny
+## Why meenie
 
 - **Channels and custom lists.** Pick from `#standup`, or maintain a `frontend-team` list independent of channel membership.
-- **Fairness stats.** Every pick is audited; `/meeny stats` shows who's been picked how often.
+- **Fairness stats.** Every pick is audited; `/meenie stats` shows who's been picked how often.
 - **No SaaS.** Self-host on your own infra. One container plus Postgres. Runs comfortably on a $5 box.
 - **Plays nicely with `/remind`.** No bespoke scheduler — Slack already has one.
 - **Small.** ~1.5k LOC of TypeScript, one HTTP service, no exotic dependencies.
@@ -27,7 +27,7 @@ Combine with Slack's built-in `/remind` and scheduled picks are free:
 The 60-second path with HTTPS tunnel included:
 
 ```bash
-git clone <this-repo> meeny && cd meeny
+git clone <this-repo> meenie && cd meenie
 cp .env.example .env                       # fill in NGROK_AUTHTOKEN
 docker compose --profile tunnel up --build
 docker compose logs ngrok                  # copy the https://… URL
@@ -39,7 +39,7 @@ Then create the Slack app:
 2. At [api.slack.com/apps](https://api.slack.com/apps), click **Create New App → From an app manifest** and paste the file.
 3. Install the app to your workspace.
 4. Copy `Signing Secret`, `Client ID`, `Client Secret`, and the **Bot Token** into `.env`.
-5. `docker compose --profile tunnel up` again. Run `/meeny help` in any Slack channel.
+5. `docker compose --profile tunnel up` again. Run `/meenie help` in any Slack channel.
 
 Prefer running on the host directly? See [Local development](#local-development).
 
@@ -47,18 +47,18 @@ Prefer running on the host directly? See [Local development](#local-development)
 
 | Command | What it does |
 |---|---|
-| `/meeny pick #channel` | Picks a random active, non-bot member of `#channel`. |
-| `/meeny pick @listname` | Picks from a custom list. |
-| `/meeny pick` | Picks from the channel you ran it in. |
-| `/meeny list create my-team` | Creates a new custom list. |
-| `/meeny list add my-team @alice @bob` | Adds members. |
-| `/meeny list remove my-team @bob` | Removes members. |
-| `/meeny list show my-team` | Shows the list. |
-| `/meeny list delete my-team` | Deletes the list. |
-| `/meeny list` | Lists every list in this workspace. |
-| `/meeny stats #channel` | Shows pick counts over the last 30 days. |
-| `/meeny stats @listname` | Same, for a custom list. |
-| `/meeny help` | Full command help inside Slack. |
+| `/meenie pick #channel` | Picks a random active, non-bot member of `#channel`. |
+| `/meenie pick @listname` | Picks from a custom list. |
+| `/meenie pick` | Picks from the channel you ran it in. |
+| `/meenie list create my-team` | Creates a new custom list. |
+| `/meenie list add my-team @alice @bob` | Adds members. |
+| `/meenie list remove my-team @bob` | Removes members. |
+| `/meenie list show my-team` | Shows the list. |
+| `/meenie list delete my-team` | Deletes the list. |
+| `/meenie list` | Lists every list in this workspace. |
+| `/meenie stats #channel` | Shows pick counts over the last 30 days. |
+| `/meenie stats @listname` | Same, for a custom list. |
+| `/meenie help` | Full command help inside Slack. |
 
 Every pick result has a **Pick again** button — re-rolls without retyping the command.
 
@@ -76,13 +76,13 @@ src/
   config.ts        zod-validated env
   db.ts            pool + query / queryOne / withTransaction
   slack.ts         Bolt + ExpressReceiver + installation store
-  router.ts        /meeny dispatcher + registerSubcommand
+  router.ts        /meenie dispatcher + registerSubcommand
   server.ts        entry point
   types.ts         Scope, TeamId, SlackUserId, ...
   picker/          pure pick(rng, ...) + pickFromChannel / pickFromList
   lists/           CRUD service + resolveListMembers
   stats/           recordPicks + getStats audit
-  handlers/        one file per /meeny subcommand
+  handlers/        one file per /meenie subcommand
   blocks/          Block Kit fragment builders
 ```
 
@@ -114,7 +114,7 @@ The codebase is small enough that a handful of conventions keep it that way:
 |---|---|---|
 | `src/db.ts` | `query`, `queryOne`, `withTransaction` | `pg.Pool` directly |
 | `src/slack.ts` | `getClientForTeam(teamId)` | `new WebClient(...)` ad hoc |
-| `src/router.ts` | `registerSubcommand(name, handler)` | `boltApp.command("/meeny", ...)` |
+| `src/router.ts` | `registerSubcommand(name, handler)` | `boltApp.command("/meenie", ...)` |
 | `src/types.ts` | `Scope`, `TeamId`, `SlackUserId`, ... | freelance string types |
 
 Action handlers (button clicks, etc.) call `boltApp.action(...)` directly with action IDs prefixed `<subcommand>_<verb>` to avoid collisions (e.g. `pick_again`).
@@ -177,8 +177,8 @@ PRs welcome.
 
 - **Weighted "fair" picks** — favour members picked less recently. The `picks` audit table already has everything needed.
 - **Postgres-backed installation store** — unlocks multi-replica deployments and proper multi-workspace OAuth at scale.
-- **Pick reasons** — `/meeny pick #standup "lead today's standup"` echoes the reason in the result message.
-- **Per-channel defaults** — `/meeny config #standup default-list @frontend-team`.
+- **Pick reasons** — `/meenie pick #standup "lead today's standup"` echoes the reason in the result message.
+- **Per-channel defaults** — `/meenie config #standup default-list @frontend-team`.
 - **Slack App Directory listing** — for the hosted SaaS path.
 
 ## License

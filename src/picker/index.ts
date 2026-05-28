@@ -92,7 +92,7 @@ export async function pickFromList(
   }
   const picked = pick(Math.random, memberIds, n);
   // Scope id is the list *name* — same string parsePickTarget feeds back into
-  // /meeny stats — so audit rows for picks and stats lookups agree without
+  // /meenie stats — so audit rows for picks and stats lookups agree without
   // resolving the list's BIGSERIAL id.
   await recordPicks(teamId, { type: "list", id: listName }, picked);
   return { picked, total: memberIds.length };

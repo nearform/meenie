@@ -42,7 +42,7 @@ function describeScopeLong(scope: Scope): string {
 }
 
 /**
- * Render the message Slack shows after a successful `/meeny pick`. The
+ * Render the message Slack shows after a successful `/meenie pick`. The
  * `text` field is the fallback for notifications and accessibility clients;
  * the blocks carry the rich layout plus the `pick_again` button that calls
  * back into the handler with the scope encoded in the button value.

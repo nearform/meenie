@@ -1,8 +1,8 @@
 /**
- * `/meeny stats <#channel | @listname | bare list-name>` — fairness report.
+ * `/meenie stats <#channel | @listname | bare list-name>` — fairness report.
  *
- * Reuses `parsePickTarget` from the pick handler so /meeny stats accepts the
- * exact same argument shapes as /meeny pick (chosen over lifting the parser
+ * Reuses `parsePickTarget` from the pick handler so /meenie stats accepts the
+ * exact same argument shapes as /meenie pick (chosen over lifting the parser
  * into its own helper module because the function is already exported and
  * has no other callers — see story write-up).
  *
@@ -27,7 +27,7 @@ registerSubcommand("stats", async (ctx) => {
   if (result.totalPicks === 0) {
     await ctx.respond({
       response_type: "ephemeral",
-      text: `No picks recorded yet for ${describeScope(scope)}. Run \`/meeny pick\` first.`,
+      text: `No picks recorded yet for ${describeScope(scope)}. Run \`/meenie pick\` first.`,
     });
     return;
   }

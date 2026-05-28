@@ -1,20 +1,20 @@
 {
   "display_information": {
-    "name": "meeny",
+    "name": "meenie",
     "description": "Pick someone at random from a channel or a custom list.",
     "background_color": "#1f2937",
-    "long_description": "meeny picks team members at random from Slack channels or your own custom lists. Use it to choose who handles a task, leads a meeting, or makes the next coffee. Combine with Slack's /remind to automate picks."
+    "long_description": "meenie picks team members at random from Slack channels or your own custom lists. Use it to choose who handles a task, leads a meeting, or makes the next coffee. Combine with Slack's /remind to automate picks."
   },
   "features": {
     "bot_user": {
-      "display_name": "meeny",
+      "display_name": "meenie",
       "always_online": false
     },
     "slash_commands": [
       {
-        "command": "/meeny",
+        "command": "/meenie",
         "url": "https://REPLACE_ME.ngrok-free.app/slack/events",
-        "description": "Pick someone at random. Try /meeny help.",
+        "description": "Pick someone at random. Try /meenie help.",
         "usage_hint": "pick #channel | list create my-team | stats @my-team",
         "should_escape": false
       }

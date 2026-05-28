@@ -25,10 +25,10 @@ expressReceiver.app.get("/", (_req, res, next) => {
 async function main(): Promise<void> {
   await pool.query("SELECT 1");
   await boltApp.start(config.PORT);
-  console.log(`meeny listening on :${config.PORT} (${config.NODE_ENV})`);
+  console.log(`meenie listening on :${config.PORT} (${config.NODE_ENV})`);
 }
 
 main().catch((err) => {
-  console.error("Failed to start meeny", err);
+  console.error("Failed to start meenie", err);
   process.exit(1);
 });

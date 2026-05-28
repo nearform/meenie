@@ -9,7 +9,7 @@ const CHANNEL_ID_RE = /^[CGD][A-Z0-9]+$/i;
 const LIST_NAME_RE = /^[a-z0-9][a-z0-9_-]{0,31}$/i;
 
 /**
- * Decide what `/meeny pick <arg>` should pick from:
+ * Decide what `/meenie pick <arg>` should pick from:
  *  - `<#C123|name>` or bare `C123/G123/D123`  -> channel
  *  - `@listname` or bare `listname` matching the list-name regex -> list
  *  - empty -> fall back to the invocation channel
@@ -52,7 +52,7 @@ async function pickForScope(
 function emptyMessage(scope: Scope): string {
   return scope.type === "channel"
     ? `No eligible members in <#${scope.id}>. Bots and deactivated users are skipped — invite some humans and try again.`
-    : `The list \`${scope.id}\` is empty. Add members with \`/meeny list add ${scope.id} @user\`.`;
+    : `The list \`${scope.id}\` is empty. Add members with \`/meenie list add ${scope.id} @user\`.`;
 }
 
 async function respondToError(
@@ -63,7 +63,7 @@ async function respondToError(
   if (err instanceof ListNotFoundError) {
     await respond({
       response_type: "ephemeral",
-      text: `No list named \`${scope.type === "list" ? scope.id : ""}\`. Create one with \`/meeny list create <name>\`.`,
+      text: `No list named \`${scope.type === "list" ? scope.id : ""}\`. Create one with \`/meenie list create <name>\`.`,
     });
     return true;
   }
@@ -71,14 +71,14 @@ async function respondToError(
   if (scope.type === "channel" && message.includes("channel_not_found")) {
     await respond({
       response_type: "ephemeral",
-      text: `I can't see <#${scope.id}>. Double-check the channel, or invite me to it with \`/invite @meeny\`.`,
+      text: `I can't see <#${scope.id}>. Double-check the channel, or invite me to it with \`/invite @meenie\`.`,
     });
     return true;
   }
   if (scope.type === "channel" && message.includes("not_in_channel")) {
     await respond({
       response_type: "ephemeral",
-      text: `I'm not a member of <#${scope.id}>. Run \`/invite @meeny\` there and try again.`,
+      text: `I'm not a member of <#${scope.id}>. Run \`/invite @meenie\` there and try again.`,
     });
     return true;
   }
@@ -124,7 +124,7 @@ boltApp.action("pick_again", async ({ ack, body, respond }) => {
     await respond({
       response_type: "ephemeral",
       replace_original: false,
-      text: "I lost track of what to pick from. Try `/meeny pick #channel` or `/meeny pick @listname` again.",
+      text: "I lost track of what to pick from. Try `/meenie pick #channel` or `/meenie pick @listname` again.",
     });
     return;
   }
@@ -134,7 +134,7 @@ boltApp.action("pick_again", async ({ ack, body, respond }) => {
     await respond({
       response_type: "ephemeral",
       replace_original: false,
-      text: "Couldn't resolve your workspace. Try `/meeny pick` again.",
+      text: "Couldn't resolve your workspace. Try `/meenie pick` again.",
     });
     return;
   }

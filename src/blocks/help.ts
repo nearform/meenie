@@ -1,5 +1,5 @@
 /**
- * Block Kit fragment for `/meeny help`. Kept separate from the handler so the
+ * Block Kit fragment for `/meenie help`. Kept separate from the handler so the
  * handler stays a thin wire-up and the content can be unit-tested without
  * pulling Bolt into the test runtime.
  *
@@ -21,19 +21,19 @@ interface Usage {
 
 const USAGE: Record<string, Usage> = {
   pick: {
-    syntax: "/meeny pick [#channel | @list]",
+    syntax: "/meenie pick [#channel | @list]",
     desc: "Pick a member at random.",
   },
   list: {
-    syntax: "/meeny list <create|add|remove|show|delete> ...",
+    syntax: "/meenie list <create|add|remove|show|delete> ...",
     desc: "Manage custom pick lists.",
   },
   stats: {
-    syntax: "/meeny stats [#channel | @list]",
+    syntax: "/meenie stats [#channel | @list]",
     desc: "Show per-member pick counts (last 30 days).",
   },
   help: {
-    syntax: "/meeny help",
+    syntax: "/meenie help",
     desc: "Show this help message.",
   },
 };
@@ -41,10 +41,10 @@ const USAGE: Record<string, Usage> = {
 const TAGLINE = "Pick someone at random from a Slack channel or a custom list.";
 
 const AUTOMATION =
-  "Combine with Slack's `/remind` for scheduled picks. Example: `/remind #standup to /meeny pick every Monday at 9am`.";
+  "Combine with Slack's `/remind` for scheduled picks. Example: `/remind #standup to /meenie pick every Monday at 9am`.";
 
 function usageFor(name: string): Usage {
-  return USAGE[name] ?? { syntax: `/meeny ${name}`, desc: "(no description)" };
+  return USAGE[name] ?? { syntax: `/meenie ${name}`, desc: "(no description)" };
 }
 
 export function helpBlocks(): { blocks: KnownBlock[]; text: string } {
@@ -57,7 +57,7 @@ export function helpBlocks(): { blocks: KnownBlock[]; text: string } {
   const blocks: KnownBlock[] = [
     {
       type: "header",
-      text: { type: "plain_text", text: "meeny — pick someone at random" },
+      text: { type: "plain_text", text: "meenie — pick someone at random" },
     },
     {
       type: "section",
@@ -80,12 +80,12 @@ export function helpBlocks(): { blocks: KnownBlock[]; text: string } {
   ];
 
   const textLines = [
-    "meeny — pick someone at random",
+    "meenie — pick someone at random",
     TAGLINE,
     "",
     ...usages.map(({ syntax, desc }) => `${syntax}  —  ${desc}`),
     "",
-    "Combine with Slack's /remind for scheduled picks. Example: /remind #standup to /meeny pick every Monday at 9am",
+    "Combine with Slack's /remind for scheduled picks. Example: /remind #standup to /meenie pick every Monday at 9am",
   ];
 
   return { blocks, text: textLines.join("\n") };

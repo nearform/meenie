@@ -1,5 +1,5 @@
 /**
- * Block Kit fragments for `/meeny stats`. Mirrors the pickResult convention:
+ * Block Kit fragments for `/meenie stats`. Mirrors the pickResult convention:
  * a section header, a context line with summary metadata, then a body section
  * with the per-member tallies. All responses are ephemeral so the handler
  * decides the `response_type`.

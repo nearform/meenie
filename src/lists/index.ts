@@ -2,7 +2,7 @@
  * Lists service: CRUD for custom workspace lists and their members.
  *
  * Frozen contract surface (consumed by P1a's Phase-1 sync to support
- * `/meeny pick @list-name`):
+ * `/meenie pick @list-name`):
  *
  *   resolveListMembers(teamId, name): Promise<SlackUserId[]>
  *

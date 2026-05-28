@@ -1,5 +1,5 @@
 /**
- * `/meeny list <action> [args]` — workspace-scoped custom lists.
+ * `/meenie list <action> [args]` — workspace-scoped custom lists.
  *
  * Actions:
  *   (none) | index      → enumerate lists
@@ -77,7 +77,7 @@ async function actionIndex(ctx: SubcommandContext): Promise<void> {
     response_type: "ephemeral",
     text:
       lists.length === 0
-        ? "No lists yet. Create one with `/meeny list create <name>`."
+        ? "No lists yet. Create one with `/meenie list create <name>`."
         : `Lists (${lists.length}): ${lists.map((l) => `\`${l.name}\``).join(", ")}`,
     blocks: listIndexBlocks(lists),
   });
@@ -89,13 +89,13 @@ async function actionCreate(
 ): Promise<void> {
   const name = rest[0];
   if (!name) {
-    await respondEphemeral(ctx, "Usage: `/meeny list create <name>`");
+    await respondEphemeral(ctx, "Usage: `/meenie list create <name>`");
     return;
   }
   if (rest.length > 1) {
     await respondEphemeral(
       ctx,
-      "List names cannot contain spaces. Usage: `/meeny list create <name>`",
+      "List names cannot contain spaces. Usage: `/meenie list create <name>`",
     );
     return;
   }
@@ -110,7 +110,7 @@ async function actionCreate(
     const list = await createList(ctx.teamId, name);
     await respondEphemeral(
       ctx,
-      `Created list \`${list.name}\`. Add members with \`/meeny list add ${list.name} @user\`.`,
+      `Created list \`${list.name}\`. Add members with \`/meenie list add ${list.name} @user\`.`,
     );
   } catch (err) {
     if (err instanceof ListAlreadyExistsError) {
@@ -127,7 +127,7 @@ async function actionDelete(
 ): Promise<void> {
   const name = rest[0];
   if (!name) {
-    await respondEphemeral(ctx, "Usage: `/meeny list delete <name>`");
+    await respondEphemeral(ctx, "Usage: `/meenie list delete <name>`");
     return;
   }
   if (!isValidName(name)) {
@@ -152,7 +152,7 @@ async function actionAdd(
   if (!name || mentionTokens.length === 0) {
     await respondEphemeral(
       ctx,
-      "Usage: `/meeny list add <name> @user [@user ...]`",
+      "Usage: `/meenie list add <name> @user [@user ...]`",
     );
     return;
   }
@@ -176,7 +176,7 @@ async function actionAdd(
     if (err instanceof ListNotFoundError) {
       await respondEphemeral(
         ctx,
-        `No list named \`${err.listName}\`. Create it with \`/meeny list create ${err.listName}\`.`,
+        `No list named \`${err.listName}\`. Create it with \`/meenie list create ${err.listName}\`.`,
       );
       return;
     }
@@ -206,7 +206,7 @@ async function actionRemove(
   if (!name || mentionTokens.length === 0) {
     await respondEphemeral(
       ctx,
-      "Usage: `/meeny list remove <name> @user [@user ...]`",
+      "Usage: `/meenie list remove <name> @user [@user ...]`",
     );
     return;
   }
@@ -259,7 +259,7 @@ async function actionShow(
 ): Promise<void> {
   const name = rest[0];
   if (!name) {
-    await respondEphemeral(ctx, "Usage: `/meeny list show <name>`");
+    await respondEphemeral(ctx, "Usage: `/meenie list show <name>`");
     return;
   }
   if (!isValidName(name)) {
