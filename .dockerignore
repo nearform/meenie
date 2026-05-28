@@ -1,0 +1,40 @@
+# Keep the build context — and the resulting image — small and free of secrets.
+
+# VCS / IDE noise
+.git/
+.gitignore
+.vscode/
+.idea/
+.cursor/
+.DS_Store
+
+# Local dev artifacts
+node_modules/
+coverage/
+.vitest/
+*.log
+.tsbuildinfo
+dist/
+
+# Local environment files (never bake secrets into images).
+# .env.example IS allowed through so the image can ship documentation.
+.env
+.env.*
+!.env.example
+
+# Tests aren't needed at runtime
+test/
+tests/
+**/*.test.ts
+**/*.spec.ts
+
+# Docs and meta
+README.md
+*.md
+LICENSE
+
+# Docker meta itself (no need to recurse it into the build context)
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.*.yml
