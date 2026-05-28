@@ -9,5 +9,5 @@
 
 import "./help.ts";
 // import "./list.ts";  // P1b
-// import "./pick.ts";  // P1a
+import "./pick.ts";
 // import "./stats.ts"; // P2a
