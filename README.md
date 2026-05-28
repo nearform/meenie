@@ -26,13 +26,27 @@ Not yet wired (parallel work):
 
 ## Local setup
 
+The fast path — Postgres in Docker, app on host:
+
+```bash
+docker compose up -d db   # start Postgres only
+./scripts/dev.sh          # bootstrap .env, install deps, migrate, run dev
+```
+
+`scripts/dev.sh` is idempotent: on the first run it copies `.env.example` to
+`.env` and exits so you can fill in the `SLACK_*` values; subsequent runs
+install deps, apply migrations, and start the dev server with watch mode.
+
+Manual fallback (no helper script):
+
 ```bash
 pnpm install
 cp .env.example .env
 # Edit .env: fill in SLACK_* values from the Slack app you create below.
 
-# Start Postgres (P3a will provide docker-compose; for now bring your own)
-createdb meeny
+# Start Postgres any way you like (compose, brew services, native install, …):
+docker compose up -d db
+# or: createdb meeny
 
 pnpm migrate
 pnpm dev
@@ -53,6 +67,99 @@ The app listens on `http://localhost:3000` and exposes:
 3. At https://api.slack.com/apps, click **Create New App → From an app manifest**, paste the file.
 4. Install the app to your workspace. Copy `Signing Secret`, `Client ID`, `Client Secret`, and `Bot Token` into `.env`.
 5. Restart `pnpm dev` and run `/meeny help` in any channel.
+
+The simplest way to get an HTTPS URL with zero local install is the bundled
+ngrok side-car: `docker compose --profile tunnel up` (see [Running with Docker](#running-with-docker)).
+
+## Running with Docker
+
+Everything you need is wired in `Dockerfile` + `docker-compose.yml`:
+
+```bash
+cp .env.example .env       # fill in SLACK_* values
+docker compose up --build  # builds the app image, starts db + app
+```
+
+What this does:
+
+- Brings up `db` (`postgres:18-alpine`) with a named volume `meeny_pgdata` for
+  durable storage. The `app` container will not start until `pg_isready`
+  reports the database is healthy (managed via the compose `healthcheck` +
+  `depends_on: condition: service_healthy`).
+- Builds the `app` image from `Dockerfile` (multi-stage, runs as the `node`
+  user, healthchecks `/healthz`).
+- On every `app` container start, `scripts/docker-entrypoint.sh` runs
+  `pnpm migrate` then `exec pnpm start`. Migrations are idempotent (they're
+  tracked in the `_migrations` table), so this is safe to repeat.
+- Exposes the app on `http://localhost:3000`. Postgres is **not** exposed to
+  the host by default — uncomment the `ports:` block in `docker-compose.yml`
+  if you need to connect from your host with `psql`.
+
+### Public HTTPS via ngrok (optional)
+
+Slack needs an HTTPS URL to call. The compose stack ships an optional `ngrok`
+side-car behind the `tunnel` profile:
+
+```bash
+# put your ngrok auth token in .env (NGROK_AUTHTOKEN=…)
+docker compose --profile tunnel up
+docker compose logs ngrok            # find the public https URL in the logs
+# or open http://localhost:4040 for ngrok's local inspector
+```
+
+Copy the printed `https://….ngrok-free.app` URL into `app.manifest.json`
+(replacing every `REPLACE_ME.ngrok-free.app`) and reinstall the Slack app.
+
+### Day-to-day commands
+
+```bash
+docker compose up --build         # foreground, with rebuild
+docker compose up -d              # detached
+docker compose logs -f app        # follow app logs
+docker compose exec app pnpm migrate   # re-run migrations on demand
+docker compose down               # stop everything (volume kept)
+docker compose down -v            # stop + drop the postgres volume
+```
+
+## Production deploy notes
+
+The container is intentionally boring — any platform that can run an
+OCI image and a Postgres database will do.
+
+**Required env vars** (read by [`src/config.ts`](./src/config.ts)):
+
+| Variable                 | Notes                                                                |
+| ------------------------ | -------------------------------------------------------------------- |
+| `PORT`                   | Defaults to `3000`. Bind your load balancer to this port.            |
+| `APP_BASE_URL`           | Public HTTPS URL of the app. Used in OAuth redirects.                |
+| `DATABASE_URL`           | Postgres connection string. Use a managed/persistent instance.       |
+| `SLACK_SIGNING_SECRET`   | From the Slack app's Basic Information page.                         |
+| `SLACK_CLIENT_ID`        | OAuth client id.                                                     |
+| `SLACK_CLIENT_SECRET`    | OAuth client secret.                                                 |
+| `SLACK_STATE_SECRET`     | 32+ random chars. `openssl rand -hex 32`. Rotate carefully.          |
+| `SLACK_BOT_TOKEN`        | Optional; only used in single-workspace dev mode.                    |
+| `NODE_ENV`               | Set to `production`.                                                 |
+
+**Operational expectations**:
+
+- **HTTPS is mandatory** — Slack rejects plain HTTP request URLs. Terminate
+  TLS at a load balancer / reverse proxy in front of the container; the app
+  itself speaks plain HTTP on `PORT`.
+- **Persistent Postgres**. The compose stack uses a named volume for local
+  use; in production point `DATABASE_URL` at a managed Postgres (RDS,
+  Cloud SQL, Neon, etc.). Migrations apply on every container start and are
+  safe to re-run.
+- **Run as non-root**. The image already drops to the `node` user (uid 1000).
+  If you set Kubernetes `securityContext`, `runAsNonRoot: true` is honoured.
+- **Liveness / readiness**. The image has a Docker `HEALTHCHECK` that hits
+  `GET /healthz`. Wire your orchestrator's probes to the same endpoint.
+- **Single replica for the MVP**. The OAuth installation store is currently
+  in-memory (`MemoryInstallationStore`), so horizontal scaling would split
+  installs across pods. Stick to one replica until a shared installation
+  store is wired (out of scope for the MVP).
+- **No secrets in images**. `.env` is listed in `.dockerignore`; only
+  `.env.example` is shipped. Inject real secrets via your platform's secret
+  manager.
 
 ## How parallel agents extend this codebase
 
