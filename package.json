@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Slack app that picks team members at random from channels or custom lists.",
+  "license": "MIT",
   "type": "module",
   "engines": {
     "node": ">=20"
