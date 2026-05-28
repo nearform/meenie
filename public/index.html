@@ -3,32 +3,151 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>meeny</title>
-    <style>
-      :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
-      body { max-width: 36rem; margin: 4rem auto; padding: 0 1.5rem; line-height: 1.5; }
-      h1 { font-size: 2rem; margin-bottom: 0.25rem; }
-      p.tagline { color: #6b7280; margin-top: 0; }
-      .install {
-        display: inline-flex; align-items: center; gap: 0.5rem;
-        background: #1f2937; color: #fff; padding: 0.75rem 1.25rem;
-        border-radius: 0.5rem; text-decoration: none; font-weight: 500;
-      }
-      .install:hover { background: #111827; }
-      footer { margin-top: 4rem; color: #9ca3af; font-size: 0.875rem; }
-    </style>
+    <title>meeny — pick someone at random in Slack</title>
+    <meta
+      name="description"
+      content="meeny is a Slack app that picks team members at random from a channel or a custom list. Free, open source, and pairs with Slack's built-in /remind for scheduled picks."
+    />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <h1>meeny</h1>
-    <p class="tagline">Pick someone at random from a Slack channel or a custom list.</p>
-    <p>
-      <a class="install" href="/slack/install">Add to Slack</a>
-    </p>
-    <p>
-      Once installed, try <code>/meeny help</code> in any channel.
-    </p>
-    <footer>
-      Placeholder landing page. Story P2b will replace this with the proper marketing version.
-    </footer>
+    <div class="page">
+      <header class="hero">
+        <p class="hero__brand">
+          <svg
+            viewBox="0 0 64 64"
+            aria-hidden="true"
+            focusable="false"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="64" height="64" rx="14" ry="14" fill="#4A154B" />
+            <path
+              d="M14 50 V14 L32 36 L50 14 V50"
+              fill="none"
+              stroke="#ffffff"
+              stroke-width="6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>meeny</span>
+        </p>
+        <h1>meeny</h1>
+        <p class="hero__tagline">Pick someone at random in Slack.</p>
+        <p class="hero__description">
+          A tiny Slack app that picks one of your teammates fairly — from any
+          channel or a custom list you curate yourself. Great for standups,
+          retros, pair rotations, code reviews, and snack runs.
+        </p>
+        <p>
+          <a class="install" href="/slack/install">
+            <svg
+              class="install__icon"
+              viewBox="0 0 122.8 122.8"
+              aria-hidden="true"
+              focusable="false"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9zm6.5 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9z"
+                fill="#E01E5A"
+              />
+              <path
+                d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9zm0 6.5c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9z"
+                fill="#36C5F0"
+              />
+              <path
+                d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97zm-6.5 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9z"
+                fill="#2EB67D"
+              />
+              <path
+                d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97zm0-6.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9z"
+                fill="#ECB22E"
+              />
+            </svg>
+            <span>Add to Slack</span>
+          </a>
+        </p>
+      </header>
+
+      <section aria-labelledby="how-it-works">
+        <h2 id="how-it-works">How it works</h2>
+        <ol class="steps">
+          <li class="step">
+            <span class="step__num" aria-hidden="true">1</span>
+            <h3>Add to Slack</h3>
+            <p>
+              One-click install via OAuth. meeny only asks for the scopes it
+              needs to read channel members and post messages.
+            </p>
+          </li>
+          <li class="step">
+            <span class="step__num" aria-hidden="true">2</span>
+            <h3>Pick from channels or lists</h3>
+            <p>
+              Run <code>/meeny pick #channel</code> for an ad-hoc pick, or
+              create a curated list with <code>/meeny list create</code> and
+              pick from that.
+            </p>
+          </li>
+          <li class="step">
+            <span class="step__num" aria-hidden="true">3</span>
+            <h3>Track fairness</h3>
+            <p>
+              <code>/meeny stats</code> shows how often each member has been
+              picked recently, so you can spot drift before anyone else does.
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="prose" aria-labelledby="commands">
+        <h2 id="commands">Commands</h2>
+        <dl class="commands">
+          <div>
+            <dt>/meeny pick [#channel | @list]</dt>
+            <dd>Pick a member at random from a channel or a custom list.</dd>
+          </div>
+          <div>
+            <dt>/meeny list &lt;create|add|remove|show|delete&gt; ...</dt>
+            <dd>Manage custom pick lists scoped to your workspace.</dd>
+          </div>
+          <div>
+            <dt>/meeny stats [#channel | @list]</dt>
+            <dd>Show per-member pick counts over the last 30 days.</dd>
+          </div>
+          <div>
+            <dt>/meeny help</dt>
+            <dd>Show the in-Slack help message.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="prose" aria-labelledby="automation">
+        <h2 id="automation">Schedule picks with /remind</h2>
+        <div class="callout">
+          <p>
+            meeny intentionally has no scheduler of its own. Pair it with
+            Slack's built-in <code>/remind</code> and you get scheduled picks
+            for free:
+          </p>
+          <p>
+            <code
+              >/remind #standup to /meeny pick #standup every Monday at 9am</code
+            >
+          </p>
+        </div>
+      </section>
+
+      <footer>
+        <p>
+          <a href="#">GitHub</a>
+          &middot;
+          Made by ogcio / @nearform
+        </p>
+      </footer>
+    </div>
   </body>
 </html>
