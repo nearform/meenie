@@ -10,4 +10,4 @@
 import "./help.ts";
 import "./list.ts";
 import "./pick.ts";
-// import "./stats.ts"; // P2a
+import "./stats.ts";

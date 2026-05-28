@@ -1,6 +1,7 @@
 import type { RandomFn } from "../types.ts";
 import { resolveListMembers } from "../lists/index.ts";
 import { getClientForTeam } from "../slack.ts";
+import { recordPicks } from "../stats/index.ts";
 
 /**
  * Uniformly pick `n` distinct members from `members` using the injected `rng`.
@@ -68,6 +69,10 @@ export async function pickFromChannel(
   }
 
   const picked = pick(Math.random, eligible, n);
+  // Awaited rather than fire-and-forget: recordPicks already swallows-and-logs
+  // its own errors, so awaiting adds at most one cheap insert's latency while
+  // guaranteeing the audit row lands before we hand control back to the user.
+  await recordPicks(teamId, { type: "channel", id: channelId }, picked);
   return { picked, total: eligible.length };
 }
 
@@ -86,5 +91,9 @@ export async function pickFromList(
     return { picked: [], total: 0 };
   }
   const picked = pick(Math.random, memberIds, n);
+  // Scope id is the list *name* — same string parsePickTarget feeds back into
+  // /meeny stats — so audit rows for picks and stats lookups agree without
+  // resolving the list's BIGSERIAL id.
+  await recordPicks(teamId, { type: "list", id: listName }, picked);
   return { picked, total: memberIds.length };
 }
