@@ -36,6 +36,8 @@ vi.mock("../../src/stats/index.ts", () => ({
   recordPicks,
   recordPick: vi.fn(async () => undefined),
   getStats: vi.fn(),
+  // Empty history → uniform weights, so existing assertions still hold.
+  getPickCounts: vi.fn(async () => new Map<string, number>()),
 }));
 
 // Slack is reachable from pickFromChannel through the same module; mock it

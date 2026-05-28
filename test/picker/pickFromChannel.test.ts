@@ -23,6 +23,9 @@ vi.mock("../../src/stats/index.ts", () => ({
   recordPicks,
   recordPick: vi.fn(async () => undefined),
   getStats: vi.fn(),
+  // Empty history → recencyWeights returns all 1s → pickWeighted degrades to
+  // uniform, matching the assertions in this file (which predate fairness).
+  getPickCounts: vi.fn(async () => new Map<string, number>()),
 }));
 
 // Pull the SUT in *after* the mocks are declared so the real module body

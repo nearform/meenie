@@ -13,6 +13,7 @@ vi.mock("../../src/stats/index.ts", () => ({
   recordPick: vi.fn(),
   recordPicks: vi.fn(),
   getStats: vi.fn(),
+  getPickCounts: vi.fn(async () => new Map<string, number>()),
 }));
 
 vi.mock("../../src/lists/index.ts", () => ({

@@ -22,7 +22,8 @@ interface Usage {
 const USAGE: Record<string, Usage> = {
   pick: {
     syntax: "/meenie pick [#channel | @list]",
-    desc: "Pick a member at random.",
+    desc:
+      "Pick a member at random. Fairness-weighted: members picked recently are deprioritised so the load spreads evenly over time.",
   },
   list: {
     syntax: "/meenie list <create|add|remove|show|delete> ...",
@@ -30,7 +31,8 @@ const USAGE: Record<string, Usage> = {
   },
   stats: {
     syntax: "/meenie stats [#channel | @list]",
-    desc: "Show per-member pick counts (last 30 days).",
+    desc:
+      "Show per-member pick counts (last 30 days). This is the same window the fairness picker reasons about.",
   },
   help: {
     syntax: "/meenie help",
@@ -41,7 +43,7 @@ const USAGE: Record<string, Usage> = {
 const TAGLINE = "Pick someone at random from a Slack channel or a custom list.";
 
 const AUTOMATION =
-  "Combine with Slack's `/remind` for scheduled picks. Example: `/remind #standup to /meenie pick every Monday at 9am`.";
+  "Combine with Slack's `/remind` for scheduled picks. Example: `/remind #standup to /meenie pick every Monday at 9am`. Picks are weighted against the 30-day audit so the same people don't get picked over and over — see `/meenie stats`.";
 
 function usageFor(name: string): Usage {
   return USAGE[name] ?? { syntax: `/meenie ${name}`, desc: "(no description)" };

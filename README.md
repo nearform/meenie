@@ -171,20 +171,39 @@ docker compose down                    # stop everything (volume kept)
 docker compose down -v                 # stop + drop the Postgres volume
 ```
 
-## Randomness, by the book
+## Fairness
 
-The picker is uniform-random Fisher-Yates over the eligible (non-bot, non-deactivated) members. Six tests in [`test/picker/uniformity.test.ts`](./test/picker/uniformity.test.ts) prove this — frequency-of-each-member, every-position-gets-picked, no-Fisher-Yates-off-by-one, consecutive-repeat rate ≈ 1/N. Tolerances are several standard deviations wide; failures mean a real regression, not a flake.
+The picker isn't just uniform random — it's **recency-weighted**. Every `/meenie pick` consults the 30-day audit log and biases *against* members who've been picked frequently in this scope. The policy is intentionally simple:
 
-A note worth internalising before someone reports a "fairness bug": **uniform random will pick the same person twice in a row with probability 1/N.** For a 7-person `#standup` that's 14% per pair of days — about 8 repeat days per quarter. That is not a bug, that is what "fair coin" means. If you want recency-aware selection (see roadmap below), that is a *separate* feature; uniform random is the contract today and the tests lock it in.
+```
+weight(member) = 1 / (1 + picks_in_window)
+```
+
+| Picks in last 30 days | Relative weight | Picked roughly as often as a fresh member |
+|---|---|---|
+| 0 | 1.00 | 1× (baseline) |
+| 1 | 0.50 | ½ |
+| 2 | 0.33 | ⅓ |
+| 5 | 0.17 | ⅙ |
+| 10 | 0.09 | 1/11 |
+
+So in a 7-person standup, if Alice was picked yesterday her chance of being picked today drops from `1/7` (≈14%) to about `8%`. If she's somehow picked again today, tomorrow it's `≈5%`. The bias decays gracefully — weights are never zero — and the audit window slides, so old picks stop penalising eventually.
+
+This is the property eeny users actually want when they complain that "the same people get picked over and over". Two things matter for trusting it:
+
+1. **It's tested end-to-end.** [`test/picker/fairness.test.ts`](./test/picker/fairness.test.ts) simulates 200 daily picks across a 7-person team with one member starting 5 picks ahead, and asserts that the gap closes. Side-by-side against uniform-random with the same RNG seed, the fairness picker produces a strictly tighter distribution. The pure weight function and the weighted-sampling primitive each have their own unit tests too.
+2. **It's still uniform when history is empty.** A brand-new channel has no audit rows → every weight is `1` → fairness degrades exactly to uniform Fisher-Yates. The properties tested in [`uniformity.test.ts`](./test/picker/uniformity.test.ts) still hold for that case.
+
+If you want the bias verbatim, see [`src/picker/fairness.ts`](./src/picker/fairness.ts). If `getPickCounts` ever throws (Postgres tripping, etc.), the picker falls back to uniform for that one round and logs the failure — picking must keep working even when the audit read can't.
 
 ## Roadmap
 
 PRs welcome.
 
-- **Anti-recency "fair" picks** — bias *against* members picked recently, using the `picks` audit table. Different concern from uniformity (which the tests already cover); this is what users actually mean when they complain that eeny.io "keeps picking the same people".
 - **Postgres-backed installation store** — unlocks multi-replica deployments and proper multi-workspace OAuth at scale.
 - **Pick reasons** — `/meenie pick #standup "lead today's standup"` echoes the reason in the result message.
 - **Per-channel defaults** — `/meenie config #standup default-list @frontend-team`.
+- **Tunable fairness window** — `/meenie config #standup window 14d` to widen or shorten the recency horizon per scope.
 - **Slack App Directory listing** — for the hosted SaaS path.
 
 ## License

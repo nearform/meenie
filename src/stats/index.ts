@@ -78,6 +78,40 @@ export async function recordPicks(
   }
 }
 
+/**
+ * Per-member pick counts within the window. Used by the fairness picker to
+ * weight members inversely to recent activity. Same shape as `getStats`'s
+ * per-member breakdown but returned as a `Map` for O(1) lookup during weight
+ * computation, and without the summary round-trip (the picker doesn't need
+ * lastPickedAt).
+ *
+ * Returns an empty map for a brand-new scope. Callers that fall back to
+ * uniform on a DB error should catch and recover; this function itself
+ * propagates so the caller can decide.
+ */
+export async function getPickCounts(
+  teamId: TeamId,
+  scope: Scope,
+  windowDays: number = DEFAULT_WINDOW_DAYS,
+): Promise<Map<SlackUserId, number>> {
+  const rows = await query<PerMemberRow>(
+    `SELECT picked_user_id, COUNT(*)::text AS count
+     FROM picks
+     WHERE team_id = $1
+       AND scope_type = $2
+       AND scope_id = $3
+       AND picked_at >= NOW() - ($4::int * INTERVAL '1 day')
+     GROUP BY picked_user_id`,
+    [teamId, scope.type, scope.id, windowDays],
+  );
+
+  const counts = new Map<SlackUserId, number>();
+  for (const row of rows) {
+    counts.set(row.picked_user_id, Number.parseInt(row.count, 10));
+  }
+  return counts;
+}
+
 export async function getStats(
   teamId: TeamId,
   scope: Scope,
