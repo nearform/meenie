@@ -171,11 +171,17 @@ docker compose down                    # stop everything (volume kept)
 docker compose down -v                 # stop + drop the Postgres volume
 ```
 
+## Randomness, by the book
+
+The picker is uniform-random Fisher-Yates over the eligible (non-bot, non-deactivated) members. Six tests in [`test/picker/uniformity.test.ts`](./test/picker/uniformity.test.ts) prove this — frequency-of-each-member, every-position-gets-picked, no-Fisher-Yates-off-by-one, consecutive-repeat rate ≈ 1/N. Tolerances are several standard deviations wide; failures mean a real regression, not a flake.
+
+A note worth internalising before someone reports a "fairness bug": **uniform random will pick the same person twice in a row with probability 1/N.** For a 7-person `#standup` that's 14% per pair of days — about 8 repeat days per quarter. That is not a bug, that is what "fair coin" means. If you want recency-aware selection (see roadmap below), that is a *separate* feature; uniform random is the contract today and the tests lock it in.
+
 ## Roadmap
 
 PRs welcome.
 
-- **Weighted "fair" picks** — favour members picked less recently. The `picks` audit table already has everything needed.
+- **Anti-recency "fair" picks** — bias *against* members picked recently, using the `picks` audit table. Different concern from uniformity (which the tests already cover); this is what users actually mean when they complain that eeny.io "keeps picking the same people".
 - **Postgres-backed installation store** — unlocks multi-replica deployments and proper multi-workspace OAuth at scale.
 - **Pick reasons** — `/meenie pick #standup "lead today's standup"` echoes the reason in the result message.
 - **Per-channel defaults** — `/meenie config #standup default-list @frontend-team`.
