@@ -8,6 +8,6 @@
  */
 
 import "./help.ts";
-// import "./list.ts";  // P1b
+import "./list.ts";
 // import "./pick.ts";  // P1a
 // import "./stats.ts"; // P2a
