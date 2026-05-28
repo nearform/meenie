@@ -4,25 +4,20 @@ A Slack app that picks team members at random from channels or custom lists. MVP
 
 ## Status
 
-**Story F1 (Foundation) — in progress.** Subsequent stories are split for 2-agent parallel execution; see [the execution plan](../../../../../.cursor/plans/eeny_clone_mvp_scope_429232ca.plan.md) for the full breakdown.
+MVP is feature-complete. Phases F1 through P3 are merged on `main`; the only outstanding work is **I1 — end-to-end smoke against a real Slack workspace** (manual, requires an actual install).
 
-Wired right now:
+| Story | Owner | Surface                          | Status    |
+|-------|-------|----------------------------------|-----------|
+| F1    | -     | Foundation, frozen contracts     | merged    |
+| P1a   | A     | `/meeny pick #channel`/`@list`   | merged    |
+| P1b   | B     | `/meeny list ...` + lists schema | merged    |
+| P2a   | A     | `/meeny stats` + picks audit log | merged    |
+| P2b   | B     | Landing page + Block Kit `help`  | merged    |
+| P3a   | A     | Dockerfile + compose + docs      | merged    |
+| P3b   | B     | Vitest suite (83 tests)          | merged    |
+| I1    | -     | E2E smoke + tag `v0.1.0`         | pending   |
 
-- `/meeny help` (placeholder until P2b)
-- OAuth install + redirect endpoints
-- Postgres connection + migration runner
-- `teams` table
-
-Not yet wired (parallel work):
-
-| Story | Owner | Subcommand / surface             | Status  |
-|-------|-------|----------------------------------|---------|
-| P1a   | A     | `/meeny pick #channel` + button  | pending |
-| P1b   | B     | `/meeny list ...` + lists schema | pending |
-| P2a   | A     | `/meeny stats` + picks audit log | pending |
-| P2b   | B     | Landing page + proper `help`     | pending |
-| P3a   | A     | Dockerfile + compose + docs      | pending |
-| P3b   | B     | Test suite                       | pending |
+See [the execution plan](../../../../../.cursor/plans/eeny_clone_mvp_scope_429232ca.plan.md) for the original phasing.
 
 ## Local setup
 
