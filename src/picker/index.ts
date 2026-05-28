@@ -1,4 +1,5 @@
 import type { RandomFn } from "../types.ts";
+import { resolveListMembers } from "../lists/index.ts";
 import { getClientForTeam } from "../slack.ts";
 
 /**
@@ -68,4 +69,22 @@ export async function pickFromChannel(
 
   const picked = pick(Math.random, eligible, n);
   return { picked, total: eligible.length };
+}
+
+/**
+ * Pick from a custom list owned by the team. Thin wrapper over
+ * `resolveListMembers` (the contract P1b exposes) plus the pure `pick`.
+ * Propagates `ListNotFoundError` so the handler can surface a tailored hint.
+ */
+export async function pickFromList(
+  teamId: string,
+  listName: string,
+  n: number = 1,
+): Promise<{ picked: string[]; total: number }> {
+  const memberIds = await resolveListMembers(teamId, listName);
+  if (memberIds.length === 0) {
+    return { picked: [], total: 0 };
+  }
+  const picked = pick(Math.random, memberIds, n);
+  return { picked, total: memberIds.length };
 }
