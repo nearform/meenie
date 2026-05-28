@@ -1,0 +1,13 @@
+/**
+ * Handler barrel. Importing this file causes every handler to register itself
+ * with the router via the side-effectful `registerSubcommand` call at the top
+ * of each module.
+ *
+ * Frozen contract: parallel agents add a new line here when they introduce a
+ * subcommand. Keep imports sorted alphabetically to minimise merge conflicts.
+ */
+
+import "./help.ts";
+// import "./list.ts";  // P1b
+// import "./pick.ts";  // P1a
+// import "./stats.ts"; // P2a
