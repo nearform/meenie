@@ -1,189 +1,186 @@
 # meeny
 
-A Slack app that picks team members at random from channels or custom lists. MVP clone of [eeny.io](https://eeny.io/).
+**Pick someone at random in Slack.** From a channel, from a custom list, or whoever is around. Open-source, self-hosted, no SaaS lock-in.
 
-## Status
-
-MVP is feature-complete. Phases F1 through P3 are merged on `main`; the only outstanding work is **I1 — end-to-end smoke against a real Slack workspace** (manual, requires an actual install).
-
-| Story | Owner | Surface                          | Status    |
-|-------|-------|----------------------------------|-----------|
-| F1    | -     | Foundation, frozen contracts     | merged    |
-| P1a   | A     | `/meeny pick #channel`/`@list`   | merged    |
-| P1b   | B     | `/meeny list ...` + lists schema | merged    |
-| P2a   | A     | `/meeny stats` + picks audit log | merged    |
-| P2b   | B     | Landing page + Block Kit `help`  | merged    |
-| P3a   | A     | Dockerfile + compose + docs      | merged    |
-| P3b   | B     | Vitest suite (83 tests)          | merged    |
-| I1    | -     | E2E smoke + tag `v0.1.0`         | pending   |
-
-See [the execution plan](../../../../../.cursor/plans/eeny_clone_mvp_scope_429232ca.plan.md) for the original phasing.
-
-## Local setup
-
-The fast path — Postgres in Docker, app on host:
-
-```bash
-docker compose up -d db   # start Postgres only
-./scripts/dev.sh          # bootstrap .env, install deps, migrate, run dev
+```
+/meeny pick #standup
+> @alice is up.
+> Picked 1 of 7 members in #standup     [ Pick again ]
 ```
 
-`scripts/dev.sh` is idempotent: on the first run it copies `.env.example` to
-`.env` and exits so you can fill in the `SLACK_*` values; subsequent runs
-install deps, apply migrations, and start the dev server with watch mode.
+Combine with Slack's built-in `/remind` and scheduled picks are free:
 
-Manual fallback (no helper script):
-
-```bash
-pnpm install
-cp .env.example .env
-# Edit .env: fill in SLACK_* values from the Slack app you create below.
-
-# Start Postgres any way you like (compose, brew services, native install, …):
-docker compose up -d db
-# or: createdb meeny
-
-pnpm migrate
-pnpm dev
+```
+/remind #standup to /meeny pick every Monday at 9am
 ```
 
-The app listens on `http://localhost:3000` and exposes:
+## Why meeny
 
-- `GET  /`                       — landing page (placeholder until P2b)
-- `GET  /healthz`                — liveness probe
-- `POST /slack/events`           — all Slack events, commands, interactions
-- `GET  /slack/install`          — kicks off OAuth install
-- `GET  /slack/oauth_redirect`   — OAuth callback
+- **Channels and custom lists.** Pick from `#standup`, or maintain a `frontend-team` list independent of channel membership.
+- **Fairness stats.** Every pick is audited; `/meeny stats` shows who's been picked how often.
+- **No SaaS.** Self-host on your own infra. One container plus Postgres. Runs comfortably on a $5 box.
+- **Plays nicely with `/remind`.** No bespoke scheduler — Slack already has one.
+- **Small.** ~1.5k LOC of TypeScript, one HTTP service, no exotic dependencies.
 
-## Creating the Slack app
+## Quickstart
 
-1. Run `ngrok http 3000` (or any HTTPS tunnel) and copy the public URL.
-2. In `app.manifest.json` replace every `REPLACE_ME.ngrok-free.app` with your tunnel host.
-3. At https://api.slack.com/apps, click **Create New App → From an app manifest**, paste the file.
-4. Install the app to your workspace. Copy `Signing Secret`, `Client ID`, `Client Secret`, and `Bot Token` into `.env`.
-5. Restart `pnpm dev` and run `/meeny help` in any channel.
-
-The simplest way to get an HTTPS URL with zero local install is the bundled
-ngrok side-car: `docker compose --profile tunnel up` (see [Running with Docker](#running-with-docker)).
-
-## Running with Docker
-
-Everything you need is wired in `Dockerfile` + `docker-compose.yml`:
+The 60-second path with HTTPS tunnel included:
 
 ```bash
-cp .env.example .env       # fill in SLACK_* values
-docker compose up --build  # builds the app image, starts db + app
+git clone <this-repo> meeny && cd meeny
+cp .env.example .env                       # fill in NGROK_AUTHTOKEN
+docker compose --profile tunnel up --build
+docker compose logs ngrok                  # copy the https://… URL
 ```
 
-What this does:
+Then create the Slack app:
 
-- Brings up `db` (`postgres:18-alpine`) with a named volume `meeny_pgdata` for
-  durable storage. The `app` container will not start until `pg_isready`
-  reports the database is healthy (managed via the compose `healthcheck` +
-  `depends_on: condition: service_healthy`).
-- Builds the `app` image from `Dockerfile` (multi-stage, runs as the `node`
-  user, healthchecks `/healthz`).
-- On every `app` container start, `scripts/docker-entrypoint.sh` runs
-  `pnpm migrate` then `exec pnpm start`. Migrations are idempotent (they're
-  tracked in the `_migrations` table), so this is safe to repeat.
-- Exposes the app on `http://localhost:3000`. Postgres is **not** exposed to
-  the host by default — uncomment the `ports:` block in `docker-compose.yml`
-  if you need to connect from your host with `psql`.
+1. Open `app.manifest.json`, replace every `REPLACE_ME.ngrok-free.app` with the URL from the ngrok logs.
+2. At [api.slack.com/apps](https://api.slack.com/apps), click **Create New App → From an app manifest** and paste the file.
+3. Install the app to your workspace.
+4. Copy `Signing Secret`, `Client ID`, `Client Secret`, and the **Bot Token** into `.env`.
+5. `docker compose --profile tunnel up` again. Run `/meeny help` in any Slack channel.
 
-### Public HTTPS via ngrok (optional)
+Prefer running on the host directly? See [Local development](#local-development).
 
-Slack needs an HTTPS URL to call. The compose stack ships an optional `ngrok`
-side-car behind the `tunnel` profile:
+## Commands
+
+| Command | What it does |
+|---|---|
+| `/meeny pick #channel` | Picks a random active, non-bot member of `#channel`. |
+| `/meeny pick @listname` | Picks from a custom list. |
+| `/meeny pick` | Picks from the channel you ran it in. |
+| `/meeny list create my-team` | Creates a new custom list. |
+| `/meeny list add my-team @alice @bob` | Adds members. |
+| `/meeny list remove my-team @bob` | Removes members. |
+| `/meeny list show my-team` | Shows the list. |
+| `/meeny list delete my-team` | Deletes the list. |
+| `/meeny list` | Lists every list in this workspace. |
+| `/meeny stats #channel` | Shows pick counts over the last 30 days. |
+| `/meeny stats @listname` | Same, for a custom list. |
+| `/meeny help` | Full command help inside Slack. |
+
+Every pick result has a **Pick again** button — re-rolls without retyping the command.
+
+## Architecture
+
+A single Node service. No queue, no Redis, no cron — scheduling is delegated to Slack's `/remind`.
+
+- **[@slack/bolt](https://docs.slack.dev/tools/bolt-js)** through its `ExpressReceiver`. Slack events, slash commands, OAuth, and interactivity all land on `/slack/events`.
+- **Express 5** serves the landing page at `/` and `GET /healthz`.
+- **Postgres** for state: workspaces, lists, picks audit log. Raw-SQL migrations in [`migrations/`](./migrations/), applied on container start.
+- **Zod-validated env** so misconfiguration fails at startup, not at first request.
+
+```text
+src/
+  config.ts        zod-validated env
+  db.ts            pool + query / queryOne / withTransaction
+  slack.ts         Bolt + ExpressReceiver + installation store
+  router.ts        /meeny dispatcher + registerSubcommand
+  server.ts        entry point
+  types.ts         Scope, TeamId, SlackUserId, ...
+  picker/          pure pick(rng, ...) + pickFromChannel / pickFromList
+  lists/           CRUD service + resolveListMembers
+  stats/           recordPicks + getStats audit
+  handlers/        one file per /meeny subcommand
+  blocks/          Block Kit fragment builders
+```
+
+Single replica is fine; the OAuth installation store is in-memory for now (see [Production deploy notes](#production-deploy-notes) before horizontally scaling).
+
+## Local development
 
 ```bash
-# put your ngrok auth token in .env (NGROK_AUTHTOKEN=…)
-docker compose --profile tunnel up
-docker compose logs ngrok            # find the public https URL in the logs
-# or open http://localhost:4040 for ngrok's local inspector
+docker compose up -d db   # Postgres only
+./scripts/dev.sh          # bootstrap .env, install, migrate, watch-run
 ```
 
-Copy the printed `https://….ngrok-free.app` URL into `app.manifest.json`
-(replacing every `REPLACE_ME.ngrok-free.app`) and reinstall the Slack app.
+`scripts/dev.sh` is idempotent. First run copies `.env.example` to `.env` and stops so you can fill in `SLACK_*`. Re-run and it goes live.
 
-### Day-to-day commands
+Day-to-day:
 
 ```bash
-docker compose up --build         # foreground, with rebuild
-docker compose up -d              # detached
-docker compose logs -f app        # follow app logs
-docker compose exec app pnpm migrate   # re-run migrations on demand
-docker compose down               # stop everything (volume kept)
-docker compose down -v            # stop + drop the postgres volume
+pnpm dev          # tsx watch src/server.ts
+pnpm test         # vitest run (83 tests, ~500ms, fully mocked, no DB needed)
+pnpm typecheck    # tsc --noEmit
+pnpm migrate      # apply any new migrations to the configured DB
 ```
+
+### Contracts you shouldn't break
+
+The codebase is small enough that a handful of conventions keep it that way:
+
+| Module | Use | Not |
+|---|---|---|
+| `src/db.ts` | `query`, `queryOne`, `withTransaction` | `pg.Pool` directly |
+| `src/slack.ts` | `getClientForTeam(teamId)` | `new WebClient(...)` ad hoc |
+| `src/router.ts` | `registerSubcommand(name, handler)` | `boltApp.command("/meeny", ...)` |
+| `src/types.ts` | `Scope`, `TeamId`, `SlackUserId`, ... | freelance string types |
+
+Action handlers (button clicks, etc.) call `boltApp.action(...)` directly with action IDs prefixed `<subcommand>_<verb>` to avoid collisions (e.g. `pick_again`).
+
+### Adding a subcommand
+
+1. Create `src/handlers/<name>.ts`.
+2. Call `registerSubcommand("<name>", async (ctx) => { ... })` at module load.
+3. Add an alphabetically sorted import to `src/handlers/index.ts`.
+4. Put Block Kit fragments in `src/blocks/<name>.ts` so handlers stay thin.
+
+### Adding a migration
+
+1. Create the next-numbered `migrations/00N_<topic>.sql`.
+2. Use idempotent DDL (`CREATE TABLE IF NOT EXISTS`, etc.) so re-running is safe.
+3. `pnpm migrate` applies anything new. The `_migrations` table tracks what's been applied; each migration runs in its own transaction.
 
 ## Production deploy notes
 
-The container is intentionally boring — any platform that can run an
-OCI image and a Postgres database will do.
+The container is intentionally boring — any platform that can run an OCI image and a Postgres database will do.
 
-**Required env vars** (read by [`src/config.ts`](./src/config.ts)):
+### Required env vars
 
-| Variable                 | Notes                                                                |
-| ------------------------ | -------------------------------------------------------------------- |
-| `PORT`                   | Defaults to `3000`. Bind your load balancer to this port.            |
-| `APP_BASE_URL`           | Public HTTPS URL of the app. Used in OAuth redirects.                |
-| `DATABASE_URL`           | Postgres connection string. Use a managed/persistent instance.       |
-| `SLACK_SIGNING_SECRET`   | From the Slack app's Basic Information page.                         |
-| `SLACK_CLIENT_ID`        | OAuth client id.                                                     |
-| `SLACK_CLIENT_SECRET`    | OAuth client secret.                                                 |
-| `SLACK_STATE_SECRET`     | 32+ random chars. `openssl rand -hex 32`. Rotate carefully.          |
-| `SLACK_BOT_TOKEN`        | Optional; only used in single-workspace dev mode.                    |
-| `NODE_ENV`               | Set to `production`.                                                 |
+Validated by [`src/config.ts`](./src/config.ts) — the app refuses to start if anything is missing.
 
-**Operational expectations**:
+| Variable | Notes |
+|---|---|
+| `PORT` | Defaults to `3000`. |
+| `APP_BASE_URL` | Public HTTPS URL of the app. Used in OAuth redirects. |
+| `DATABASE_URL` | Managed/persistent Postgres connection string. |
+| `SLACK_SIGNING_SECRET` | From the Slack app's **Basic Information** page. |
+| `SLACK_CLIENT_ID` / `SLACK_CLIENT_SECRET` | OAuth credentials. |
+| `SLACK_STATE_SECRET` | 32+ random chars. `openssl rand -hex 32`. |
+| `SLACK_BOT_TOKEN` | Optional; single-workspace dev shortcut. |
+| `NODE_ENV` | `production`. |
 
-- **HTTPS is mandatory** — Slack rejects plain HTTP request URLs. Terminate
-  TLS at a load balancer / reverse proxy in front of the container; the app
-  itself speaks plain HTTP on `PORT`.
-- **Persistent Postgres**. The compose stack uses a named volume for local
-  use; in production point `DATABASE_URL` at a managed Postgres (RDS,
-  Cloud SQL, Neon, etc.). Migrations apply on every container start and are
-  safe to re-run.
-- **Run as non-root**. The image already drops to the `node` user (uid 1000).
-  If you set Kubernetes `securityContext`, `runAsNonRoot: true` is honoured.
-- **Liveness / readiness**. The image has a Docker `HEALTHCHECK` that hits
-  `GET /healthz`. Wire your orchestrator's probes to the same endpoint.
-- **Single replica for the MVP**. The OAuth installation store is currently
-  in-memory (`MemoryInstallationStore`), so horizontal scaling would split
-  installs across pods. Stick to one replica until a shared installation
-  store is wired (out of scope for the MVP).
-- **No secrets in images**. `.env` is listed in `.dockerignore`; only
-  `.env.example` is shipped. Inject real secrets via your platform's secret
-  manager.
+### Operational expectations
 
-## How parallel agents extend this codebase
+- **HTTPS is mandatory.** Slack rejects plain HTTP request URLs. Terminate TLS at a load balancer; the app itself speaks plain HTTP on `PORT`.
+- **Persistent Postgres.** Compose uses a named volume for local use; production should point `DATABASE_URL` at RDS / Cloud SQL / Neon / similar. Migrations apply on every container start and are safe to re-run.
+- **Runs as non-root** (uid 1000). Kubernetes `runAsNonRoot: true` is honoured.
+- **Health probe:** `GET /healthz`. Already wired into the Docker `HEALTHCHECK`.
+- **Single replica only** until the in-memory installation store is swapped for a shared one (Postgres-backed). Horizontal scale would split OAuth installs across pods.
+- **No secrets in images.** `.env` is in `.dockerignore`; only `.env.example` ships. Inject real secrets via your platform's secret manager.
 
-The frozen contracts established in F1:
+### Docker day-to-day
 
-- **`src/types.ts`** — `TeamId`, `SlackUserId`, `ChannelId`, `ListId`, `Scope`, `RandomFn`. Do not edit inside a parallel phase.
-- **`src/db.ts`** — use `query`, `queryOne`, `withTransaction`. Do not import `pg.Pool` directly.
-- **`src/slack.ts`** — use `getClientForTeam(teamId)` to call the Web API. Do not instantiate `WebClient` ad hoc.
-- **`src/router.ts`** — register subcommands via `registerSubcommand(name, handler)`. Do not call `boltApp.command` directly.
+```bash
+docker compose up --build              # foreground with rebuild
+docker compose up -d                   # detached
+docker compose logs -f app             # follow app logs
+docker compose exec app pnpm migrate   # re-run migrations on demand
+docker compose down                    # stop everything (volume kept)
+docker compose down -v                 # stop + drop the Postgres volume
+```
 
-### Adding a subcommand (P1a, P1b, P2a)
+## Roadmap
 
-1. Create `src/handlers/<name>.ts`.
-2. At the top of the file, call `registerSubcommand("<name>", async (ctx) => { ... })`.
-3. Add a new alphabetically-sorted import line to `src/handlers/index.ts`.
-4. Block Kit fragments go in `src/blocks/<name>.ts` so handlers stay thin.
-5. Action handlers (Block Kit buttons, etc.) call `boltApp.action(...)` directly. Reserve action IDs with a `<subcommand>_<verb>` prefix to avoid collisions (e.g. `pick_again`).
+PRs welcome.
 
-### Adding a migration (P1b, P2a)
+- **Weighted "fair" picks** — favour members picked less recently. The `picks` audit table already has everything needed.
+- **Postgres-backed installation store** — unlocks multi-replica deployments and proper multi-workspace OAuth at scale.
+- **Pick reasons** — `/meeny pick #standup "lead today's standup"` echoes the reason in the result message.
+- **Per-channel defaults** — `/meeny config #standup default-list @frontend-team`.
+- **Slack App Directory listing** — for the hosted SaaS path.
 
-1. Pick the next reserved number: P1b owns `002_lists.sql`, P2a owns `003_picks.sql`.
-2. Write idempotent SQL (`CREATE TABLE IF NOT EXISTS`, etc.).
-3. Run `pnpm migrate`. The runner tracks applied files in the `_migrations` table.
-4. Migrations run inside a transaction; failures roll back automatically.
+## License
 
-### Branching
-
-Each story works on `feat/<story-id>` branched off the foundation branch (`feat/f1-foundation`). Parallel pairs merge to an integration branch (`integration/phase-N`) at the end of each phase, after `pnpm build && pnpm test` is green.
-
-## Reference
-
-Feature checklist mirrors [eeny.io](https://eeny.io/): pick from channels or custom lists, fairness stats, automation via Slack `/remind`.
+MIT. Built as an open-source counterpart to [eeny.io](https://eeny.io/), with thanks to its UX for the cue.
