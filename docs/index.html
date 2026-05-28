@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>meeny — pick someone at random in Slack</title>
+    <meta
+      name="description"
+      content="Self-hosted Slack app that picks team members at random from a channel or a custom list. Open source, MIT-licensed, pairs with Slack's built-in /remind for scheduled picks."
+    />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="style.css" />
+    <meta property="og:title" content="meeny — pick someone at random in Slack" />
+    <meta
+      property="og:description"
+      content="Self-hosted Slack random picker. Channels, custom lists, fairness stats. One container plus Postgres."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nearform.github.io/meeny/" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <p class="hero__brand">
+          <svg
+            viewBox="0 0 64 64"
+            aria-hidden="true"
+            focusable="false"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="64" height="64" rx="14" ry="14" fill="#4A154B" />
+            <path
+              d="M14 50 V14 L32 36 L50 14 V50"
+              fill="none"
+              stroke="#ffffff"
+              stroke-width="6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>meeny</span>
+        </p>
+        <h1>meeny</h1>
+        <p class="hero__tagline">Pick someone at random in Slack.</p>
+        <p class="hero__description">
+          A tiny self-hosted Slack app that picks one of your teammates fairly
+          — from any channel or a custom list you curate yourself. Great for
+          standups, retros, pair rotations, code reviews, and snack runs.
+          One container plus Postgres. MIT-licensed.
+        </p>
+        <p class="hero__ctas">
+          <a class="install" href="https://github.com/nearform/meeny">
+            <svg
+              class="install__icon"
+              viewBox="0 0 16 16"
+              aria-hidden="true"
+              focusable="false"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill="#ffffff"
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
+              />
+            </svg>
+            <span>View on GitHub</span>
+          </a>
+          <a class="install install--secondary" href="https://github.com/nearform/meeny#quickstart">
+            <span>Read the docs</span>
+          </a>
+        </p>
+      </header>
+
+      <section aria-labelledby="how-it-works">
+        <h2 id="how-it-works">How it works</h2>
+        <ol class="steps">
+          <li class="step">
+            <span class="step__num" aria-hidden="true">1</span>
+            <h3>Self-host meeny</h3>
+            <p>
+              One container plus Postgres. <code>docker compose up</code> and
+              you have an HTTPS-ready Slack app behind ngrok, ready for
+              workspace install via OAuth.
+            </p>
+          </li>
+          <li class="step">
+            <span class="step__num" aria-hidden="true">2</span>
+            <h3>Pick from channels or lists</h3>
+            <p>
+              Run <code>/meeny pick #channel</code> for an ad-hoc pick, or
+              create a curated list with <code>/meeny list create</code> and
+              pick from that.
+            </p>
+          </li>
+          <li class="step">
+            <span class="step__num" aria-hidden="true">3</span>
+            <h3>Track fairness</h3>
+            <p>
+              <code>/meeny stats</code> shows how often each member has been
+              picked recently, so you can spot drift before anyone else does.
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="prose" aria-labelledby="commands">
+        <h2 id="commands">Commands</h2>
+        <dl class="commands">
+          <div>
+            <dt>/meeny pick [#channel | @list]</dt>
+            <dd>Pick a member at random from a channel or a custom list.</dd>
+          </div>
+          <div>
+            <dt>/meeny list &lt;create|add|remove|show|delete&gt; ...</dt>
+            <dd>Manage custom pick lists scoped to your workspace.</dd>
+          </div>
+          <div>
+            <dt>/meeny stats [#channel | @list]</dt>
+            <dd>Show per-member pick counts over the last 30 days.</dd>
+          </div>
+          <div>
+            <dt>/meeny help</dt>
+            <dd>Show the in-Slack help message.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="prose" aria-labelledby="automation">
+        <h2 id="automation">Schedule picks with /remind</h2>
+        <div class="callout">
+          <p>
+            meeny intentionally has no scheduler of its own. Pair it with
+            Slack's built-in <code>/remind</code> and you get scheduled picks
+            for free:
+          </p>
+          <p>
+            <code
+              >/remind #standup to /meeny pick #standup every Monday at 9am</code
+            >
+          </p>
+        </div>
+      </section>
+
+      <section class="prose" aria-labelledby="self-host">
+        <h2 id="self-host">Run your own</h2>
+        <p>
+          meeny is self-hosted by design — there's no central SaaS to lock
+          your workspace into. The fast path with a public HTTPS tunnel:
+        </p>
+        <pre><code>git clone https://github.com/nearform/meeny.git
+cd meeny
+cp .env.example .env  <span class="muted"># fill in NGROK_AUTHTOKEN</span>
+docker compose --profile tunnel up --build
+docker compose logs ngrok  <span class="muted"># copy the https URL into app.manifest.json</span></code></pre>
+        <p>
+          Full instructions, deploy notes, and the Slack manifest live in
+          <a href="https://github.com/nearform/meeny#quickstart">the README</a>.
+        </p>
+      </section>
+
+      <footer>
+        <p>
+          <a href="https://github.com/nearform/meeny">GitHub</a>
+          &middot;
+          <a href="https://github.com/nearform/meeny/issues">Issues</a>
+          &middot;
+          Made by <a href="https://www.nearform.com/">nearform</a>
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>
