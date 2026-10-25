@@ -10,10 +10,10 @@ importers:
     dependencies:
       '@slack/bolt':
         specifier: ^4.7.3
-        version: 4.7.3(@types/express@5.0.6)
+        version: 4.7.3(@types/express@5.0.6)(debug@4.4.3)
       '@slack/web-api':
         specifier: ^7.16.0
-        version: 7.16.0
+        version: 7.16.0(debug@4.4.3)
       express:
         specifier: ^5.2.1
         version: 5.2.1
@@ -1004,8 +1004,8 @@ packages:
   siginfo@2.0.0:
     resolution: {integrity: sha512-ybx0WO1/8bSBLEWXZvEd7gMW3Sn3JFlW3TvX1nREbDLRNQNaeNN8WK0meBwPdAaOI7TtRRRJn/Es1zhrrCHu7g==}
 
-  source-map-js@1.2.1:
-    resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
+  source-map-js@1.2.2:
+    resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
     engines: {node: '>=0.10.0'}
 
   split2@4.2.0:
@@ -1342,15 +1342,15 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@slack/bolt@4.7.3(@types/express@5.0.6)':
+  '@slack/bolt@4.7.3(@types/express@5.0.6)(debug@4.4.3)':
     dependencies:
       '@slack/logger': 4.0.1
-      '@slack/oauth': 3.0.5
-      '@slack/socket-mode': 2.0.7
+      '@slack/oauth': 3.0.5(debug@4.4.3)
+      '@slack/socket-mode': 2.0.7(debug@4.4.3)
       '@slack/types': 2.21.1
-      '@slack/web-api': 7.16.0
+      '@slack/web-api': 7.16.0(debug@4.4.3)
       '@types/express': 5.0.6
-      axios: 1.16.1
+      axios: 1.16.1(debug@4.4.3)
       express: 5.2.1
       path-to-regexp: 8.4.2
       raw-body: 3.0.2
@@ -1365,10 +1365,10 @@ snapshots:
     dependencies:
       '@types/node': 25.9.1
 
-  '@slack/oauth@3.0.5':
+  '@slack/oauth@3.0.5(debug@4.4.3)':
     dependencies:
       '@slack/logger': 4.0.1
-      '@slack/web-api': 7.16.0
+      '@slack/web-api': 7.16.0(debug@4.4.3)
       '@types/jsonwebtoken': 9.0.10
       '@types/node': 25.9.1
       jsonwebtoken: 9.0.3
@@ -1376,10 +1376,10 @@ snapshots:
       - debug
       - supports-color
 
-  '@slack/socket-mode@2.0.7':
+  '@slack/socket-mode@2.0.7(debug@4.4.3)':
     dependencies:
       '@slack/logger': 4.0.1
-      '@slack/web-api': 7.16.0
+      '@slack/web-api': 7.16.0(debug@4.4.3)
       '@types/node': 25.9.1
       '@types/ws': 8.18.1
       eventemitter3: 5.0.4
@@ -1392,13 +1392,13 @@ snapshots:
 
   '@slack/types@2.21.1': {}
 
-  '@slack/web-api@7.16.0':
+  '@slack/web-api@7.16.0(debug@4.4.3)':
     dependencies:
       '@slack/logger': 4.0.1
       '@slack/types': 2.21.1
       '@types/node': 25.9.1
       '@types/retry': 0.12.0
-      axios: 1.16.1
+      axios: 1.16.1(debug@4.4.3)
       eventemitter3: 5.0.4
       form-data: 4.0.5
       is-electron: 2.2.2
@@ -1542,9 +1542,9 @@ snapshots:
 
   asynckit@0.4.0: {}
 
-  axios@1.16.1:
+  axios@1.16.1(debug@4.4.3):
     dependencies:
-      follow-redirects: 1.16.0
+      follow-redirects: 1.16.0(debug@4.4.3)
       form-data: 4.0.5
       https-proxy-agent: 5.0.1
       proxy-from-env: 2.1.0
@@ -1730,7 +1730,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  follow-redirects@1.16.0: {}
+  follow-redirects@1.16.0(debug@4.4.3):
+    optionalDependencies:
+      debug: 4.4.3
 
   form-data@4.0.5:
     dependencies:
@@ -2000,7 +2002,7 @@ snapshots:
     dependencies:
       nanoid: 3.3.12
       picocolors: 1.1.1
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
 
   postgres-array@2.0.0: {}
 
@@ -2128,7 +2130,7 @@ snapshots:
 
   siginfo@2.0.0: {}
 
-  source-map-js@1.2.1: {}
+  source-map-js@1.2.2: {}
 
   split2@4.2.0: {}
 
